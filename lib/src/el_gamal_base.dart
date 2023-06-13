@@ -115,6 +115,34 @@ class ElGamal {
   }
 
 
+  ///Encrypts data block
+  Map<String, BigInt> encryptDataBlock(BigInt publicKey, BigInt dataBlock) {
+    BigInt k = (generateRand(512) % (p - BigInt.from(4))) + BigInt.two;
+    BigInt x = g.modPow(k, p);
+    BigInt y = (publicKey.modPow(k, p) * dataBlock) % p;
+    return {
+      "x": x,
+      "y": y
+    };
+  }
+
+
+  ///Decrypts data block
+  BigInt decryptDataBlock(BigInt privateKey, Map<String, BigInt> ciphertext) {
+    if (ciphertext["x"] == null) {
+      throw ArgumentError("Ciphertext must have `x` field");
+    }
+
+    if (ciphertext["y"] == null) {
+      throw ArgumentError("Ciphertext must have `y` field");
+    }
+
+    BigInt s = ciphertext["x"]!.modPow(privateKey, p);
+    BigInt m = (ciphertext["y"]! * s.modInverse(p)) % p;
+    return m;
+  }
+
+
   ///Converts Uint8List to BigInt
   BigInt _uint8ListToBigInt(Uint8List list) {
     BigInt output = BigInt.zero;
