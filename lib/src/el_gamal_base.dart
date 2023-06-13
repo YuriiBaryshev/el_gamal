@@ -56,13 +56,7 @@ class ElGamal {
     BigInt r = g.modPow(k, p);
 
     Uint8List hashValue = sha1.process(message);
-    BigInt hashValueBN = BigInt.zero;
-    for(int i = 0; i < hashValue.length; i++) {
-      hashValueBN = hashValueBN + BigInt.from(hashValue[i]);
-      hashValueBN = hashValueBN << 8;
-    }
-
-    BigInt s = (hashValueBN - (privateKey * r)) % (p - BigInt.one);
+    BigInt s = (_uint8ListToBigInt(hashValue) - (privateKey * r)) % (p - BigInt.one);
     s = (s * k.modInverse(p - BigInt.one)) % (p - BigInt.one);
 
     if(s == BigInt.zero) {
@@ -91,5 +85,16 @@ class ElGamal {
     }
     BigInt randNumber = BigInt.parse(hexPresentation, radix: 16);
     return randNumber;
+  }
+
+
+  ///Converts Uint8List to BigInt
+  BigInt _uint8ListToBigInt(Uint8List list) {
+    BigInt output = BigInt.zero;
+    for(int i = 0; i < list.length; i++) {
+      output = output << 8;
+      output = output + BigInt.from(list[i]);
+    }
+    return output;
   }
 }
