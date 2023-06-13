@@ -70,6 +70,34 @@ class ElGamal {
   }
 
 
+  ///Verifies signature in the following format
+  ///```
+  ///{"r": ...,
+  ///"s": ...
+  ///}
+  ///```
+  bool verifySignature(BigInt publicKey, Uint8List message, Map<String, BigInt> signature) {
+    if (signature["s"] == null) {
+      throw ArgumentError("Signature must have `s` field");
+    }
+
+    if (signature["r"] == null) {
+      throw ArgumentError("Signature must have `r` field");
+    }
+
+    BigInt y = publicKey.modInverse(p);
+    Uint8List hashValue = sha1.process(message);
+    BigInt u1 = (
+        _uint8ListToBigInt(hashValue) * signature["s"]!.modInverse(p - BigInt.one)
+      ) % (p - BigInt.one);
+    BigInt u2 = (
+        signature["r"]! * signature["s"]!.modInverse(p - BigInt.one)
+      ) % (p - BigInt.one);
+    BigInt v = (g.modPow(u1, p) * y.modPow(u2, p)) % p;
+    return v == signature["r"]!;
+  }
+
+
   ///Computes public key for the private key
   BigInt getPublicKey(BigInt privateKey) {
     return g.modPow(privateKey, p);
