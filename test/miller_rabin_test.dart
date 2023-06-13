@@ -19,5 +19,16 @@ void main() {
       expect(millerRabin10.isPrime(b), isTrue);
       expect(millerRabin99.isPrime(b), isTrue);
     });
+
+
+    test('negative primality test', () {
+      BigInt a = BigInt.from(258);
+      BigInt b = BigInt.from(894363);
+      BigInt c = BigInt.parse('effffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f', radix: 16);
+
+      expect(millerRabin99.isPrime(a), isFalse);
+      expect(millerRabin99.isPrime(b), isFalse);
+      expect(millerRabin99.isPrime(c), isFalse);
+    });
   });
 }
