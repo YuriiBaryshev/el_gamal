@@ -19,14 +19,34 @@ class MillerRabin {
       return false;
     }
 
-    bool output = true;
+    BigInt d = n - BigInt.one;
+    int r = 0;
+
+    while(d.isEven) {
+      d = d >> 1;
+      r++;
+    }
 
     for (int i = 0; i < _roundsNumber; i++) {
       BigInt a = _generateRand(n);
+      BigInt x = a.modPow(d, n);
+      if ((x == BigInt.one) || x == (n - BigInt.one)) {
+        return true;
+      }
+
+      for(; r > 0; r--) {
+        x = (x * x) % n;
+        if(x == BigInt.one) {
+          return false;
+        }
+
+        if(x == n - BigInt.one) {
+          break;
+        }
+      }
 
     }
-
-    return output;
+    return true;
   }
 
 
