@@ -2,8 +2,8 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:hash_functions/hash_functions.dart';
 
-/// Checks if you are awesome. Spoiler: you are.
-class ElGamal4096 {
+/// Implements ElGamal encryption and signature schemes for 4096 bits
+class ElGamal {
   BigInt p = BigInt.parse(
       "d885ba075554c41a28019e8dd871ae2a29dba8cd18420feeab379a75ad3593d19c0d22d4"
           "b6030571ed62666608fdd090e5ef8988c0e57172500516bd5d9636998e23ca49a211"
@@ -52,7 +52,7 @@ class ElGamal4096 {
   ///}
   ///```
   Map<String, BigInt> sign(BigInt privateKey, Uint8List message) {
-    BigInt k = (_generateRand(512) % (p - BigInt.two)) + BigInt.two;
+    BigInt k = (generateRand(512) % (p - BigInt.two)) + BigInt.two;
     BigInt r = g.modPow(k, p);
 
     Uint8List hashValue = sha1.process(message);
@@ -76,8 +76,14 @@ class ElGamal4096 {
   }
 
 
+  ///Computes public key for the private key
+  BigInt getPublicKey(BigInt privateKey) {
+    return g.modPow(privateKey, p);
+  }
+
+
   ///Generates random number
-  BigInt _generateRand(int byteLength) {
+  BigInt generateRand(int byteLength) {
     String hexPresentation = "";
     Random rand = Random.secure();
     for(int i = 0; i < byteLength; i++) {
