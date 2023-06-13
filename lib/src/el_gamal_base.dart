@@ -1,7 +1,7 @@
-// TODO: Put public facing types in this file.
+import 'dart:math';
 
 /// Checks if you are awesome. Spoiler: you are.
-class ElGamal {
+class ElGamal4096 {
   BigInt p = BigInt.parse(
       "d885ba075554c41a28019e8dd871ae2a29dba8cd18420feeab379a75ad3593d19c0d22d4"
           "b6030571ed62666608fdd090e5ef8988c0e57172500516bd5d9636998e23ca49a211"
@@ -37,4 +37,19 @@ class ElGamal {
           "8f46e080b1db618caa654c9e601eabebb8c838ae1054574fdae71362c16cbb6e9d0b"
           "59b160af4db6855892cc990eb30b42b8e0390a05e223519ee45ffbf738f5b94f900b",
       radix: 16);
+
+
+
+
+
+  ///Generates random number
+  BigInt _generateRand(int byteLength) {
+    String hexPresentation = "";
+    Random rand = Random.secure();
+    for(int i = 0; i < byteLength; i++) {
+      hexPresentation = hexPresentation + rand.nextInt(255).toRadixString(16).padLeft(2, "0");
+    }
+    BigInt randNumber = BigInt.parse(hexPresentation, radix: 16);
+    return randNumber;
+  }
 }
