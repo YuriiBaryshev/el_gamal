@@ -7,9 +7,6 @@ environment:
   sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
-  big_numbers_arithmetic:
-    git: https://github.com/YuriiBaryshev/big_numbers_arithmetic.git
-
   hash_functions:
     git: https://github.com/YuriiBaryshev/hash_functions.git
 
