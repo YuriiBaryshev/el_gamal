@@ -44,6 +44,36 @@ class ElGamal4096 {
   final SHA1 sha1 = SHA1();
 
 
+  ///Sign with a privateKey
+  ///JSON/mapping is outputted in format
+  ///```
+  ///{"r": ...,
+  ///"s": ...
+  ///}
+  ///```
+  Map<String, BigInt> sign(BigInt privateKey, Uint8List message) {
+    BigInt k = (_generateRand(512) % (p - BigInt.two)) + BigInt.two;
+    BigInt r = g.modPow(k, p);
+
+    Uint8List hashValue = sha1.process(message);
+    BigInt hashValueBN = BigInt.zero;
+    for(int i = 0; i < hashValue.length; i++) {
+      hashValueBN = hashValueBN + BigInt.from(hashValue[i]);
+      hashValueBN = hashValueBN << 8;
+    }
+
+    BigInt s = (hashValueBN - (privateKey * r)) % (p - BigInt.one);
+    s = (s * k.modInverse(p - BigInt.one)) % (p - BigInt.one);
+
+    if(s == BigInt.zero) {
+      return sign(privateKey, message);
+    }
+
+    return {
+      "r": r,
+      "s": BigInt.zero
+    };
+  }
 
 
   ///Generates random number
