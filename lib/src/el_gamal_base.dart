@@ -41,7 +41,7 @@ class ElGamal {
       radix: 16);
 
 
-  final SHA1 sha1 = SHA1();
+  final SHA1 _sha1 = SHA1();
 
 
   ///Sign with a privateKey
@@ -52,10 +52,14 @@ class ElGamal {
   ///}
   ///```
   Map<String, BigInt> sign(BigInt privateKey, Uint8List message) {
-    BigInt k = (generateRand(512) % (p - BigInt.two)) + BigInt.two;
+    BigInt k = (generateRand(512) % (p - BigInt.from(4))) + BigInt.two;
+    while(k.gcd(p - BigInt.one) != BigInt.one) {
+      k = (generateRand(512) % (p - BigInt.from(4))) + BigInt.two;
+    }
+
     BigInt r = g.modPow(k, p);
 
-    Uint8List hashValue = sha1.process(message);
+    Uint8List hashValue = _sha1.process(message);
     BigInt s = (_uint8ListToBigInt(hashValue) - (privateKey * r)) % (p - BigInt.one);
     s = (s * k.modInverse(p - BigInt.one)) % (p - BigInt.one);
 
@@ -65,7 +69,7 @@ class ElGamal {
 
     return {
       "r": r,
-      "s": BigInt.zero
+      "s": s
     };
   }
 
@@ -76,6 +80,7 @@ class ElGamal {
   ///"s": ...
   ///}
   ///```
+  ///The algorithm was derived from https://caislab.kaist.ac.kr/lecture/2010/spring/cs548/basic/B02.pdf
   bool verifySignature(BigInt publicKey, Uint8List message, Map<String, BigInt> signature) {
     if (signature["s"] == null) {
       throw ArgumentError("Signature must have `s` field");
@@ -85,16 +90,10 @@ class ElGamal {
       throw ArgumentError("Signature must have `r` field");
     }
 
-    BigInt y = publicKey.modInverse(p);
-    Uint8List hashValue = sha1.process(message);
-    BigInt u1 = (
-        _uint8ListToBigInt(hashValue) * signature["s"]!.modInverse(p - BigInt.one)
-      ) % (p - BigInt.one);
-    BigInt u2 = (
-        signature["r"]! * signature["s"]!.modInverse(p - BigInt.one)
-      ) % (p - BigInt.one);
-    BigInt v = (g.modPow(u1, p) * y.modPow(u2, p)) % p;
-    return v == signature["r"]!;
+    Uint8List hashValue = _sha1.process(message);
+    BigInt v = g.modPow(_uint8ListToBigInt(hashValue), p);
+    BigInt u = publicKey.modPow(signature["r"]!, p) * signature["r"]!.modPow(signature["s"]!, p) % p;
+    return u == v;
   }
 
 
