@@ -28,25 +28,34 @@ class MillerRabin {
     }
 
     for (int i = 0; i < _roundsNumber; i++) {
-      BigInt a = _generateRand(n);
-      BigInt x = a.modPow(d, n);
-      if ((x == BigInt.one) || x == (n - BigInt.one)) {
-        return true;
+      if (!_round(d, r, n)) {
+        return false;
       }
-
-      for(; r > 0; r--) {
-        x = (x * x) % n;
-        if(x == BigInt.one) {
-          return false;
-        }
-
-        if(x == n - BigInt.one) {
-          break;
-        }
-      }
-
     }
     return true;
+  }
+
+
+  ///round
+  bool _round(BigInt d, int r, BigInt n) {
+    BigInt a = _generateRand(n);
+    BigInt x = a.modPow(d, n);
+
+    if ((x == BigInt.one) || x == (n - BigInt.one)) {
+      return true;
+    }
+
+    for(int j = 0; j < r; j++) {
+      x = (x * x) % n;
+      if(x == BigInt.one) {
+        return false;
+      }
+
+      if(x == (n - BigInt.one)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
