@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:hash_functions/hash_functions.dart';
 
 /// Checks if you are awesome. Spoiler: you are.
 class ElGamal4096 {
@@ -38,6 +40,8 @@ class ElGamal4096 {
           "59b160af4db6855892cc990eb30b42b8e0390a05e223519ee45ffbf738f5b94f900b",
       radix: 16);
 
+
+  final SHA1 sha1 = SHA1();
 
 
 
