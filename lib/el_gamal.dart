@@ -4,5 +4,6 @@
 library el_gamal;
 
 export 'src/el_gamal_base.dart';
+export 'src/miller_rabin.dart';
 
 // TODO: Export any libraries intended for clients of this package.
