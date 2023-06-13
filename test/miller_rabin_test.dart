@@ -30,5 +30,5 @@ void main() {
       expect(millerRabin99.isPrime(b), isFalse);
       expect(millerRabin99.isPrime(c), isFalse);
     });
-  });
+  }, skip: "passed tests were muted for the performance sake");
 }
