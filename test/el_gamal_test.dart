@@ -27,6 +27,16 @@ void main() {
       signature = elGamal.sign(privateKey, message);
       expect(elGamal.verifySignature(publicKey, message, signature), isTrue);
     });
+
+
+    test('sings and fails to verify altered signatures', () {
+      Uint8List message = Uint8List.fromList([]);
+      Map<String, BigInt> signature = elGamal.sign(privateKey, message);
+      expect(elGamal.verifySignature(publicKey, Uint8List.fromList([1]), signature), isFalse);
+      expect(elGamal.verifySignature(publicKey + BigInt.one, message, signature), isFalse);
+      expect(elGamal.verifySignature(publicKey, message,
+          {"s": signature["s"]!, "r": signature["r"]! + BigInt.one}), isFalse);
+    });
   });
 
 
