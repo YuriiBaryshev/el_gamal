@@ -6,7 +6,7 @@ void main() {
   
   BigInt p = BigInt.zero;
   while(!millerRabin.isPrime(p)) {
-    p = generateRand(512) + BigInt.parse(
+    p = generateRand(512) | BigInt.parse(
         "1000000000000000000000000000000000000000000000000000000000000000000000"
             "000000000000000000000000000000000000000000000000000000000000000000"
             "000000000000000000000000000000000000000000000000000000000000000000"
@@ -25,7 +25,7 @@ void main() {
             "000000000000000000000000000000", radix: 16
     );
   }
-  print(p.toRadixString(16));
+  print(p.toRadixString(16)); //possible p from 2048 to 4096 bits length for the ElGamal scheme
 }
 
 
