@@ -143,6 +143,46 @@ class ElGamal {
   }
 
 
+  ///Encrypts bytes array
+  List<Map<String, BigInt>> encryptMessage(BigInt publicKey, Uint8List message) {
+    List<Map<String, BigInt>> output = [];
+    BigInt dataBlock = BigInt.zero;
+    int j = 0;
+    for(int i = 0; i < message.length; i++, j++) {
+      if(j == 510) { //if data blocks would be 512 bits their value might exceed p
+        dataBlock = (dataBlock << 8) + BigInt.from(message[i]);
+        output.add(encryptDataBlock(publicKey, dataBlock));
+        dataBlock = BigInt.zero;
+        j = -1;
+      } else {
+        dataBlock = (dataBlock << 8) + BigInt.from(message[i]);
+      }
+    }
+
+    if(j != 0) {
+      dataBlock = (dataBlock << (8 * (511 - j))); //padding with zeros
+      output.add(encryptDataBlock(publicKey, dataBlock));
+    }
+
+    return output;
+  }
+
+
+  ///Decrypts signatures into bytes array
+  Uint8List decryptMessage(BigInt privateKey, List<Map<String, BigInt>> ciphertext) {
+    Uint8List output = Uint8List(511 * ciphertext.length);
+    for(int i = 0; i < ciphertext.length; i++) {
+      BigInt dataBlock = decryptDataBlock(privateKey, ciphertext[i]);
+      for(int j = 510; j >= 0; j--) {
+        output[i * 511 + j] = (dataBlock & BigInt.from(0xff)).toInt();
+        dataBlock = dataBlock >> 8;
+      }
+    }
+
+    return output;
+  }
+
+
   ///Converts Uint8List to BigInt
   BigInt _uint8ListToBigInt(Uint8List list) {
     BigInt output = BigInt.zero;
